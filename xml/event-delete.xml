@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Sample request for deleting specific events -->
+<DeleteEventsRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://dhamma.org" version="3-0-0">
+	<LanguageKey>
+		<IsoCode>en</IsoCode>
+	</LanguageKey>
+	<Publish>
+		<Value>true</Value>
+	</Publish>
+	<EventKeys>
+		<EventKey>
+			<LocationKey>
+				<SubDomain>[subdomain]</SubDomain>
+			</LocationKey>
+			<EventId>[event-id]</EventId>
+		</EventKey>
+	</EventKeys>
+</DeleteEventsRequest>
+

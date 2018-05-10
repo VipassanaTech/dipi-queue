@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CreateOrUpdateEventsRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://dhamma.org" version="3-0-0">
+	<LanguageKey>
+		<IsoCode>en</IsoCode>
+	</LanguageKey>
+	<Publish>
+		<Value>true</Value>
+	</Publish>
+	<Events>
+		<Event>
+			<EventKey>
+				<LocationKey>
+					<SubDomain>[subdomain]</SubDomain>
+				</LocationKey>
+				<EventId>[event-id]</EventId>
+			</EventKey>
+			<Tentative>
+				<Value>false</Value>
+			</Tentative>
+			<StartDate>[course-start]</StartDate>
+			<EndDate>[course-end]</EndDate>
+			<EnrollmentOpenDate>[enrol-date]</EnrollmentOpenDate>
+			<EventType>[course-type]</EventType>
+			<ApplicationTemplateName>[course-type-template]</ApplicationTemplateName>
+			<NewMaleStatus>[status-nm]</NewMaleStatus>
+			<NewFemaleStatus>[status-nf]</NewFemaleStatus>
+			<OldMaleStatus>[status-om]</OldMaleStatus>
+			<OldFemaleStatus>[status-of]</OldFemaleStatus>
+			<Cancelled>
+				<Value>[cancelled]</Value>
+			</Cancelled>
+			<NewEvent>
+				<Value>[new-event]</Value>
+			</NewEvent>
+			<DateChange>
+				<Value>[date-changed]</Value>
+			</DateChange>
+			<ListOnly>
+				<Value>[list-only]</Value>
+			</ListOnly>
+			<Special>
+				<Value>[special]</Value>
+			</Special>
+			<CanApplyInProgress>
+				<Value>false</Value>
+			</CanApplyInProgress>
+			<EventTypeDescription>
+			  [description]
+			</EventTypeDescription>
+			<Comments>[comments]</Comments>
+			<ApplyLinkUrlOverride/>
+		</Event>
+	</Events>
+</CreateOrUpdateEventsRequest>
+

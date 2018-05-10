@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Sample request for specific teachers information -->
+<GetTeachersInfoRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://dhamma.org" version="3-0-0">
+	<LanguageKey>
+		<IsoCode>en</IsoCode>
+	</LanguageKey>
+	<TeacherKeys>
+		<TeacherKey>
+			<DhammaCode>AKT</DhammaCode>
+		</TeacherKey>
+		<TeacherKey>
+			<DhammaCode>MK3</DhammaCode>
+		</TeacherKey>
+	</TeacherKeys>
+</GetTeachersInfoRequest>
+

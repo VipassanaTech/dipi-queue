@@ -1,0 +1,64 @@
+<?php
+$VRAY_SERVER = "VRAY";
+$VRAY_USER = "vray1";
+$VRAY_PASSWD = "vraypass";
+$VRAY_DB = "dhamma";
+
+//$VRAY_CENTRE_ID = "14";
+
+$MAP['RegApplicantID'] = 'a_vray_id';
+$MAP['FirstName']	= 'a_f_name';
+$MAP['MiddleName']	= 'a_m_name';
+$MAP['LastName']	= 'a_l_name';
+$MAP['CityName']	= 'a_city_str';
+//$MAP['StateName']	= '';
+//$MAP['CountryName']	= '';
+$MAP['Address']		= 'a_address';
+$MAP['ZipOrPinCode']	= 'a_zip';
+$MAP['Email']		= 'a_email';
+$MAP['PhoneHome']	= 'a_phone_home';
+$MAP['PhoneOffice']	= 'a_phone_office';
+$MAP['PhoneMobile']	= 'a_phone_mobile';
+$MAP['PhoneFax']	= 'a_phone_fax';
+$MAP['Gender']		= 'a_gender';
+$MAP['DOB1']		= 'a_dob';
+$MAP['Education']	= 'a_education';
+$MAP['Occupation']	= 'a_occupation';
+$MAP['Company']		= 'a_company';
+$MAP['Department']	= 'a_department';
+$MAP['Post']		= 'a_designation';
+$MAP['IsOldStudent']	= 'a_old';
+$MAP['ApplicationMode'] = 'a_source';
+
+//$MAP['MotherTongue']	= '';
+//$MAP['OtherLanguagesKnown']	= '';
+/*
+$MAP['HealthProblemPhysical']	= '';
+$MAP['HealthProblemMental']	= '';
+$MAP['Medication']	= '';
+$MAP['Intoxicants']	= '';
+$MAP['OtherKnownTechniques']	= '';
+$MAP['TeachOrPracticeOthTechniques']	= '';
+$MAP['IsReferalListed']	= '';
+$MAP['IsOldStudent']	= '';
+$MAP['IsLongCourseStudent']	= '';
+$MAP['RecommendedBy']	= '';
+$MAP['FirstCourseDate']	= '';
+$MAP['FirstCourseLocation']	= '';
+$MAP['FirstCourseTeacherName']	= '';
+$MAP['LastCourseDate']	= '';
+$MAP['LastCourseLocation']	= '';
+$MAP['LastCourseTeacherName']	= '';
+$MAP['MaintainedVipPracticeDetails']	= '';
+$MAP['TotalCoursesSat']	= '';
+$MAP['TotalCoursesServed']	= '';
+$MAP['HusbandOccupation']	= '';
+$MAP['BusinessDetails']	= '';
+$MAP['ConfirmationNumberPrefix']	= '';
+$MAP['ConfirmationNumber']	= '';
+$MAP['ApplicationMode']	= '';
+*/
+
+$MAP_COURSE = array(1 => 6 , 2 => 41 , 3 => 8 , 4 => 10, 5 => 12, 6 => 13, 7 => 14, 8 => 11, 10 => 7, 11 => 46, 14 => 9);
+
+?>

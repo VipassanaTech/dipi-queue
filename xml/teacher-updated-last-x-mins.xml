@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Sample request for all teachers info -->
+<GetTeachersInfoRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://dhamma.org" version="3-0-0">
+	<LanguageKey>
+		<IsoCode>en</IsoCode>
+	</LanguageKey>
+	<CreatedOrUpdatedInLastXMinutes>1440</CreatedOrUpdatedInLastXMinutes>
+</GetTeachersInfoRequest>
+

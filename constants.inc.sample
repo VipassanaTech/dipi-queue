@@ -1,0 +1,28 @@
+<?php
+
+$MQ_HOST = "staging.dhamma.org";
+$MQ_USER = "vray";
+$MQ_PASSWD = "dsfkkldlkfmdfkm";
+$MQ_VHOST = "osa.vray.applications.xml";
+$MQ_QUEUE = "apps-vray";
+$MQ_PORT = 5671;
+
+$EVENT_URL = "https://staging.dhamma.org/portal/integration/service";
+
+$RUNNING_EVENT = "/tmp/EVENT-RUNNING-DIPI";
+
+$APP_ROOT = "/dhamma/web/apps/dipi";
+$PHOTO_DIR = "/dhamma/web/files/dipi/photo-id";
+
+$DB_HOST = "localhost";
+$DB_USER = "dipi";
+$DB_PASSWD = "vmdmmvcmcmcjkdf";
+$DB_NAME = "dipi";
+
+$CRON_USER_ID = 1;
+
+$BATCH_SIZE = 70;
+$LOG = "/var/log/mq-dipi-fetch.log";
+
+
+?>
