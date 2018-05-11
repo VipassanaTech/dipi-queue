@@ -36,6 +36,8 @@
 			<NewFemaleStatus>[status-nf]</NewFemaleStatus>
 			<OldMaleStatus>[status-om]</OldMaleStatus>
 			<OldFemaleStatus>[status-of]</OldFemaleStatus>
+		        <MaleServerStatus>[status-server-om]</MaleServerStatus>
+		        <FemaleServerStatus>[status-server-of]</FemaleServerStatus>
 			<Cancelled>
 				<Value>[cancelled]</Value>
 			</Cancelled>

@@ -56,10 +56,11 @@ function add_update_event( $data )
 {
   $xml = file_get_contents("xml/event-create-update.xml");
    $search = array('[subdomain]', '[event-id]', '[course-start]', '[course-end]', '[enrol-date]', '[course-type]', '[status-nm]', '[status-nf]', 
-		    '[status-of]', '[status-om]', '[cancelled]', '[new-event]', '[list-only]', '[special]', '[comments]', '[date-changed]', '[description]', '[course-type-template]' );
+		    '[status-of]', '[status-om]', '[cancelled]', '[new-event]', '[list-only]', '[special]', '[comments]', '[date-changed]', '[description]', '[course-type-template]',
+		    '[status-server-om]', '[status-server-of]' );
    $replace = array( $data['c_subdomain'], $data['c_id'], $data['c_start'], $data['c_end'], $data['c_enrol_date'], $data['course_type'], $data['c_status_nm'], $data['c_status_nf'], 
 		     $data['c_status_of'], $data['c_status_om'], make_bool($data['c_cancelled']), 'false', make_bool($data['c_list_only']), 'false', $data['c_comments'],
-		     make_bool($data['c_date_change']), $data['c_description'], $data['course_template'] );
+		     make_bool($data['c_date_change']), $data['c_description'], $data['course_template'], $data['c_status_svr_m'], $data['c_status_svr_f'] );
    $xml = str_replace( $search, $replace, $xml );
 //   file_put_contents("/tmp/event-req" , $xml, FILE_APPEND);
 //   print $xml;
