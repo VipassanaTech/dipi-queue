@@ -165,10 +165,13 @@ function process_xml( $xml )
   $course_type_id = my_result("select td_id from dh_type_detail where td_type='COURSE-TYPE'  and  td_key='$course_type'");
   if ( $course_type_id == 0)
     logit("process_xml: Cant find Course Type $course_type");
-//  $course_id = my_result("select c_id from dh_course where c_center='$center_id' and c_course_type='$course_type_id' and c_start='".$data['start_date']."' and c_end='".$data['end_date']."'"); 
   $course_id = my_result("select c_id from dh_course where c_center='$center_id' and c_id='$event_id'"); 
   if ( $course_id == 0 )
-     $course_id = create_course( $center_id, $course_type_id, $data );
+  {
+      $course_id = my_result("select c_id from dh_course where c_center='$center_id' and c_course_type='$course_type_id' and c_start='".$data['start_date']."' and c_end='".$data['end_date']."'"); 
+      if ($course_id == 0 )
+        $course_id = create_course( $center_id, $course_type_id, $data );
+  }
 
   $ROW['dh_applicant']['a_source'] = 'dhamma.org';
   $ROW['dh_applicant']['a_source_id'] = (string)$appid;
