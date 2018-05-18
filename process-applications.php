@@ -168,7 +168,7 @@ function process_xml( $xml )
   $course_id = my_result("select c_id from dh_course where c_center='$center_id' and c_id='$event_id'"); 
   if ( $course_id == 0 )
   {
-      $course_id = my_result("select c_id from dh_course where c_center='$center_id' and c_course_type='$course_type_id' and c_start='".$data['start_date']."' and c_end='".$data['end_date']."'"); 
+      $course_id = my_result("select c_id from dh_course where c_center='$center_id' and c_course_type='$course_type_id' and c_start='".$data['start_date']."' and c_end='".$data['end_date']."' limit 1"); 
       if ($course_id == 0 )
         $course_id = create_course( $center_id, $course_type_id, $data );
   }
