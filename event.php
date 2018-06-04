@@ -102,14 +102,21 @@ while ( $row = mysql_fetch_array($res) )
         chdir($old);
         continue;
     }
+    echo $row['c_id']."\n";
     if ( $row['c_deleted'] )
     {
 	$response = delete_event($row);
+        if (! mysql_query("update dh_course set c_processed='1' where c_id=".$row['c_id']))
+	   logit("Error: Course id ".$row['c_id']." - ".mysql_error());
+	continue;
     }
     else
        $response = add_update_event( $row );
     if ( !$response['status'] )
+    {
+	print $response['error']."\n";
         $data = 'Error: '.$response['error'];
+    }
     else
     {
 //	 print $response['response'];
