@@ -4,19 +4,66 @@ include_once( "constants.inc" );
 include_once("map.php");
 
 
-function get_course_id( $domain, $start, $end )
+function get_course_data( $domain, $start, $end )
 {
-   $q = "select c.c_id from dh_course c left join dh_center cc on (c.c_center = cc.c_id) where c.c_start='$start' and c.c_end='$end' and cc.c_subdomain='$domain' ";
-   $hand = mysql_query( $q ) or logit("get_course_id: Could not get course: ".mysql_error()."\n");
+   $q = "select c.c_id, td.td_key from dh_course c left join dh_center cc on (c.c_center = cc.c_id) left join dh_type_detail td on (c.c_course_type=td.td_id)
+     where c.c_start='$start' and c.c_end='$end' and cc.c_subdomain='$domain'";
+   $hand = mysql_query( $q ) or logit("get_course_data: Could not get course: ".mysql_error()."\n");
+   $id = 0; $type_code = '';
+
    if ( ! $hand )
-	return 0;
-   $id = 0;
+	   return array('id' => $id, 'type' => $type_code);
    if ( mysql_num_rows($hand) > 0 )
    {
        $r = mysql_fetch_array($hand);
-	$id = $r['c_id'];
+	     $id = $r['c_id'];
+       $type_code = $r['td_key'];
    }
-   return $id;
+   return array('id' => $id, 'type' => $type_code);
+}
+
+function get_centre_config( $centre )
+{
+  $settings = my_result("select cs_course_config from dh_center_setting where cs_center=$centre");
+
+  $ini = array();
+  if ($settings <> '')
+    $ini = parse_ini_string($settings, true, INI_SCANNER_RAW);
+  return $ini;
+}
+
+function course_status_check( $center_id, $course_type, $gender, $course_id )
+{
+    $ini = get_centre_config( $center_id );
+    $g = ($gender == 'M')?"Male":"Female";
+    $count_full = 0; $count_wait = 0;
+    if ( is_array($ini[$course_type]) )
+    {
+        if ( isset($ini[$course_type]['MaxApps-'.$g]) && (trim($ini[$course_type]['MaxApps-'.$g]) <> '') )
+          $count_full = $ini[$course_type]['MaxApps-'.$g];
+        if ( isset($ini[$course_type]['WaitlistApps-'.$g]) && (trim($ini[$course_type]['WaitlistApps-'.$g]) <> '') )
+          $count_wait = $ini[$course_type]['WaitlistApps-'.$g];
+    }
+    if ( ( $count_full > 0) || ($count_wait > 0))
+    {
+        $SYSTEM_USER_ID = my_result("select td_val1 from dh_type_detail where td_type='COURSE-APPLICANT' and td_key='COURSE-SYSTEM-UID'");
+        $count = my_result("select count(a_id) from dh_applicant where a_center=$center_id and a_course=$course_id and a_gender='$gender'" );
+        if ( $count >= $count_full )
+        {
+            $q = "update dh_course set c_status_o".strtolower($gender)." = 'Course Full', c_status_n".strtolower($gender)." = 'Course Full', 
+              c_processed=0, c_updated='".date("Y-m-d H:i:s")."', c_updated_by='$SYSTEM_USER_ID' where c_id=$course_id";
+            mysql_query($q);
+        }
+        elseif ( $count > $count_wait )
+        {
+            if ($count_wait > 0 )
+            {
+                $q = "update dh_course set c_status_o".strtolower($gender)." = 'Wait List', c_status_n".strtolower($gender)." = 'Wait List', 
+                  c_processed=0, c_updated='".date("Y-m-d H:i:s")."', c_updated_by='$SYSTEM_USER_ID' where c_id=$course_id";
+                mysql_query($q);
+            }
+        }
+    }
 }
 
 function create_course( $center_id, $course_type_id, $data )
@@ -304,6 +351,8 @@ function process_xml( $xml )
 	}
      }
   }
+
+  course_status_check( $center_id, $course_type, $ROW['dh_applicant']['a_gender'], $course_id );
   return $ROW;
 }
 
