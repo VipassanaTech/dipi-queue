@@ -397,7 +397,7 @@ function insert_application( $data )
    exec($cmd);
    $old = $data['dh_applicant']['a_old']?"o":"n";
    $course_status = my_result("select c_status_".$old.strtolower($data['dh_applicant']['a_gender'])." from dh_course where c_id=".$data['dh_applicant']['a_course']);
-   if ( $course_status == 'Wait List' )
+   if ( in_array($course_status, array('Wait List', 'Course Full')) )
    {
      $cmd = "/usr/bin/php status-trigger.php $applicant_id 'WaitList'";
      exec($cmd);    
