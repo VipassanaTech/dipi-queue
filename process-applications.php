@@ -395,6 +395,14 @@ function insert_application( $data )
    chdir($APP_ROOT);
    $cmd = "/usr/bin/php status-trigger.php $applicant_id 'Received'";
    exec($cmd);
+   $old = $data['dh_applicant']['a_old']?"o":"n";
+   $course_status = my_result("select c_status_".$old.strtolower($data['dh_applicant']['a_gender'])." from dh_course where c_id=".$data['dh_applicant']['a_course']);
+   if ( $course_status == 'Wait List' )
+   {
+     $cmd = "/usr/bin/php status-trigger.php $applicant_id 'WaitList'";
+     exec($cmd);    
+   }
+
    chdir($old);
    return $applicant_id;
 }
