@@ -120,16 +120,18 @@ function process_row( $rec )
    $id = 0;
    if ( $rec['x_redelivery'] )
    {
-	$q = "select a_id from dh_applicant where a_xml_msg_id='".$rec['x_msg_id']."'";
-	$hand = mysql_query( $q ) or logit("process_row: redelivery: Cant query: ", mysql_error()."\n");
-	if ( !$hand )
-	   return;
-	if ( mysql_num_rows($hand) > 0 )
-	{
-	    $r = mysql_fetch_array($hand);
-	    $id =  $r['a_id'];
-	}
+    	$q = "select a_id from dh_applicant where a_xml_msg_id='".$rec['x_msg_id']."'";
+    	$hand = mysql_query( $q ) or logit("process_row: redelivery: Cant query: ", mysql_error()."\n");
+    	if ( !$hand )
+    	   return;
+    	if ( mysql_num_rows($hand) > 0 )
+    	{
+    	    $r = mysql_fetch_array($hand);
+    	    $id =  $r['a_id'];
+    	}
    }
+   $data['dh_applicant']['a_f_name'] = ucwords(strtolower( $data['dh_applicant']['a_f_name'] ) );
+   $data['dh_applicant']['a_l_name'] = ucwords(strtolower( $data['dh_applicant']['a_l_name'] ) );
    if ( $id )
       update_application( $id, $data);
    else
