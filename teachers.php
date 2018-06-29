@@ -77,6 +77,19 @@ foreach( $xml->Teachers->Teacher as $t )
 	 }
       }
    }
+   if (strstr($out['t_current_status'], "(AT)"))
+      $out['t_seniority'] = 5;
+   elseif (strstr($out['t_current_status'], "(SAT)"))
+      $out['t_seniority'] = 7;
+   elseif (strstr($out['t_current_status'], "(CT)"))
+      $out['t_seniority'] = 10;
+   elseif (strstr($out['t_current_status'], "(CAT)"))
+      $out['t_seniority'] = 10;
+   elseif (strstr($out['t_current_status'], "(T)"))
+      $out['t_seniority'] = 10;
+   elseif (strstr($out['t_current_status'], "(BT)"))
+      $out['t_seniority'] = 10;
+
    $out['t_created_by'] = $out['t_updated_by'] = 1;
    $out['t_updated'] = date('Y-m-d H:i:s');
    $id = my_result("select t_id from dh_teacher where t_unique_code='".$out['t_unique_code']."'");
