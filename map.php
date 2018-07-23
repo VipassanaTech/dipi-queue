@@ -37,7 +37,7 @@ $MAP["QuestionMedicationDetails"] = array("type" => "text", "field" => "ae_desc_
 $MAP["QuestionDrugs"] = array("type" => "optionbool", "field" => "a_addiction_current", "table" => "dh_applicant");
 $MAP["QuestionDrugsDetails"] = array("type" => "text", "field" => "ae_desc_addiction_current", "table" => "dh_applicant_extra");
 $MAP["QuestionFriendsOrFamiliy"] = array("type" => "optionbool", "field" => "a_friend_family", "table" => "dh_applicant");
-$MAP["QuestionFriendsOrFamiliyDetails"] = array("type" => "string", "field" => "a_friend_family_details", "table" => "dh_applicant");
+$MAP["QuestionFriendsOrFamiliyDetails"] = array("type" => "text", "field" => "a_friend_family_details", "table" => "dh_applicant");
 $MAP["QuestionCheckHereIfWillingToServe"] = array("type" => "checkbox", "field" => "a_willing_to_serve", "table" => "dh_applicant");
 $MAP["QuestionCheckHereIfHelpSetup"] = array("type" => "checkbox", "field" => "a_willing_to_help", "table" => "dh_applicant");
 $MAP["QuestionAdditionalInformation"] = array("type" => "text", "field" => "a_extra", "table" => "dh_applicant");
