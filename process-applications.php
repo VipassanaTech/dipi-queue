@@ -397,12 +397,16 @@ function insert_application( $data )
    chdir($APP_ROOT);
    $cmd = "/usr/bin/php status-trigger.php $applicant_id 'Received'";
    exec($cmd);
-   $old = $data['dh_applicant']['a_old']?"o":"n";
-   $course_status = my_result("select c_status_".$old.strtolower($data['dh_applicant']['a_gender'])." from dh_course where c_id=".$data['dh_applicant']['a_course']);
-   if ( in_array($course_status, array('Wait List', 'Course Full')) && ( strtolower($data['dh_applicant']['a_type']) <> 'sevak') )
+   $update_waitlist = my_result("select cs_apps_waitlist from dh_center_setting where cs_center=".$data['dh_applicant']['a_center']);
+   if ($update_waitlist)
    {
-     $cmd = "/usr/bin/php status-trigger.php $applicant_id 'WaitList'";
-     exec($cmd);    
+     $old = $data['dh_applicant']['a_old']?"o":"n";
+     $course_status = my_result("select c_status_".$old.strtolower($data['dh_applicant']['a_gender'])." from dh_course where c_id=".$data['dh_applicant']['a_course']);
+     if ( in_array($course_status, array('Wait List', 'Course Full')) && ( strtolower($data['dh_applicant']['a_type']) <> 'sevak') )
+     {
+       $cmd = "/usr/bin/php status-trigger.php $applicant_id 'WaitList'";
+       exec($cmd);    
+     }    
    }
 
    chdir($old);
