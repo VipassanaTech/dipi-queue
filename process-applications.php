@@ -7,7 +7,7 @@ include_once("map.php");
 function get_course_data( $domain, $start, $end )
 {
    $q = "select c.c_id, td.td_key from dh_course c left join dh_center cc on (c.c_center = cc.c_id) left join dh_type_detail td on (c.c_course_type=td.td_id)
-     where c.c_start='$start' and c.c_end='$end' and cc.c_subdomain='$domain'";
+	 where c.c_start='$start' and c.c_end='$end' and cc.c_subdomain='$domain'";
    $hand = mysql_query( $q ) or logit("get_course_data: Could not get course: ".mysql_error()."\n");
    $id = 0; $type_code = '';
 
@@ -15,9 +15,9 @@ function get_course_data( $domain, $start, $end )
 	   return array('id' => $id, 'type' => $type_code);
    if ( mysql_num_rows($hand) > 0 )
    {
-       $r = mysql_fetch_array($hand);
-	     $id = $r['c_id'];
-       $type_code = $r['td_key'];
+	   $r = mysql_fetch_array($hand);
+		 $id = $r['c_id'];
+	   $type_code = $r['td_key'];
    }
    return array('id' => $id, 'type' => $type_code);
 }
@@ -28,60 +28,62 @@ function get_centre_config( $centre )
 
   $ini = array();
   if ($settings <> '')
-    $ini = parse_ini_string($settings, true, INI_SCANNER_RAW);
+	$ini = parse_ini_string($settings, true, INI_SCANNER_RAW);
   return $ini;
 }
 
 function course_status_check( $center_id, $course_type, $gender, $course_id )
 {
-    $ini = get_centre_config( $center_id );
-    $g = ($gender == 'M')?"Male":"Female";
-    $count_full = 0; $count_wait = 0;
-    if ( is_array($ini[$course_type]) )
-    {
-        if ( isset($ini[$course_type]['MaxApps-'.$g]) && (trim($ini[$course_type]['MaxApps-'.$g]) <> '') )
-          $count_full = $ini[$course_type]['MaxApps-'.$g];
-        if ( isset($ini[$course_type]['WaitlistApps-'.$g]) && (trim($ini[$course_type]['WaitlistApps-'.$g]) <> '') )
-          $count_wait = $ini[$course_type]['WaitlistApps-'.$g];
-    }
-    if ( ( $count_full > 0) || ($count_wait > 0))
-    {
-        $SYSTEM_USER_ID = my_result("select td_val1 from dh_type_detail where td_type='COURSE-APPLICANT' and td_key='COURSE-SYSTEM-UID'");
-        $count = my_result("select count(a_id) from dh_applicant where a_center=$center_id and a_course=$course_id and a_gender='$gender'" );
-        if ( $count >= $count_full )
-        {
-            $q = "update dh_course set c_status_o".strtolower($gender)." = 'Course Full', c_status_n".strtolower($gender)." = 'Course Full', 
-              c_processed=0, c_updated='".date("Y-m-d H:i:s")."', c_updated_by='$SYSTEM_USER_ID' where c_id=$course_id";
-            mysql_query($q);
-        }
-        elseif ( $count > $count_wait )
-        {
-            if ($count_wait > 0 )
-            {
-                $q = "update dh_course set c_status_o".strtolower($gender)." = 'Wait List', c_status_n".strtolower($gender)." = 'Wait List', 
-                  c_processed=0, c_updated='".date("Y-m-d H:i:s")."', c_updated_by='$SYSTEM_USER_ID' where c_id=$course_id";
-                mysql_query($q);
-            }
-        }
-    }
+	$ini = get_centre_config( $center_id );
+	$g = ($gender == 'M')?"Male":"Female";
+	$count_full = 0; $count_wait = 0;
+	if ( is_array($ini[$course_type]) )
+	{
+		if ( isset($ini[$course_type]['MaxApps-'.$g]) && (trim($ini[$course_type]['MaxApps-'.$g]) <> '') )
+		  $count_full = trim($ini[$course_type]['MaxApps-'.$g]);
+		if ( isset($ini[$course_type]['Waitlist-'.$g]) && (trim($ini[$course_type]['Waitlist-'.$g]) <> '') )
+		  $count_wait = trim($ini[$course_type]['Waitlist-'.$g]);
+	}
+	if ( ( $count_full > 0) || ($count_wait > 0))
+	{
+		$SYSTEM_USER_ID = my_result("select td_val1 from dh_type_detail where td_type='COURSE-APPLICANT' and td_key='COURSE-SYSTEM-UID'");
+		$count = my_result("select count(a_id) from dh_applicant where a_center=$center_id and a_course=$course_id and a_gender='$gender'" );
+		if ( $count >= $count_full )
+		{
+			logit("Centre: $center_id, Course Id: $course_id, Gender: $gender, Count: $count, Count Full: $count_full");
+			$q = "update dh_course set c_status_o".strtolower($gender)." = 'Course Full', c_status_n".strtolower($gender)." = 'Course Full', 
+			  c_processed=0, c_updated='".date("Y-m-d H:i:s")."', c_updated_by='$SYSTEM_USER_ID' where c_id=$course_id";
+			mysql_query($q);
+		}
+		elseif ( $count > $count_wait )
+		{
+			if ($count_wait > 0 )
+			{
+				logit("Centre: $center_id, Course Id: $course_id, Gender: $gender, Count: $count, Count Wait: $count_wait");
+				$q = "update dh_course set c_status_o".strtolower($gender)." = 'Wait List', c_status_n".strtolower($gender)." = 'Wait List', 
+				  c_processed=0, c_updated='".date("Y-m-d H:i:s")."', c_updated_by='$SYSTEM_USER_ID' where c_id=$course_id";
+				mysql_query($q);
+			}
+		}
+	}
 }
 
 function create_course( $center_id, $course_type_id, $data )
 {
    if ( ! is_array($data) )
    {
-      logit("create_course: No Data\n");
-      return 0;
+	  logit("create_course: No Data\n");
+	  return 0;
    }
    if ( $center_id == 0)
    {
-      logit("create_course: Center Id is zero\n");
-      return 0;
+	  logit("create_course: Center Id is zero\n");
+	  return 0;
    }
    if ( $course_type_id == 0 )
    {
-      logit("create_course: Course Type Id is zero\n");
-      return 0;
+	  logit("create_course: Course Type Id is zero\n");
+	  return 0;
    }
    $rec = array();
    $rec['c_center'] = $center_id;
@@ -104,75 +106,86 @@ function create_course( $center_id, $course_type_id, $data )
    return $id;
 }
 
+function is_in_referal_list( $row )
+{
+	$referal = 0;
+	$q = "select r_id from dh_referral r left join dh_student s on (r.r_student=s.s_id) 
+		where s_f_name = '".$row['a_f_name']."' and s_l_name='".$row['a_l_name']."' and 
+		( s_email='".$row['a_email']."' or s_phone_mobile='".$row['a_phone_mobile']."' ) limit 1";
+	$referal = db_query($q)->fetchField();
+	return $referal;
+}
+
 function process_row( $rec )
 {
    global $CRON_USER_ID, $PHOTO_DIR;
    if ( !is_array($rec) )
-     return;
+	 return;
    if ( trim($rec['x_body']) == '' )
-     return;
+	 return;
    $data = process_xml( $rec['x_body'] );
 
    //print_r($data);
-   $data['dh_applicant']['a_xml_msg_id'] = $rec['x_msg_id'];
+   $data['dh_applicant']['a_xml_id'] = $rec['x_id'];
+   //$data['dh_applicant']['a_xml_msg_id'] = $rec['x_msg_id'];
    $data['dh_applicant']['a_updated_by'] = $CRON_USER_ID;
    $data['dh_applicant']['a_updated'] = date("Y-m-d H:i:s");
    $id = 0;
    if ( $rec['x_redelivery'] )
    {
-    	$q = "select a_id from dh_applicant where a_xml_msg_id='".$rec['x_msg_id']."'";
-    	$hand = mysql_query( $q ) or logit("process_row: redelivery: Cant query: ", mysql_error()."\n");
-    	if ( !$hand )
-    	   return;
-    	if ( mysql_num_rows($hand) > 0 )
-    	{
-    	    $r = mysql_fetch_array($hand);
-    	    $id =  $r['a_id'];
-    	}
+		$q = "select a_id from dh_applicant where a_xml_msg_id='".$rec['x_msg_id']."'";
+		$hand = mysql_query( $q ) or logit("process_row: redelivery: Cant query: ", mysql_error()."\n");
+		if ( !$hand )
+		   return;
+		if ( mysql_num_rows($hand) > 0 )
+		{
+			$r = mysql_fetch_array($hand);
+			$id =  $r['a_id'];
+		}
    }
    $data['dh_applicant']['a_f_name'] = ucwords(strtolower( $data['dh_applicant']['a_f_name'] ) );
    $data['dh_applicant']['a_l_name'] = ucwords(strtolower( $data['dh_applicant']['a_l_name'] ) );
    if ( $id )
-      update_application( $id, $data);
+	  update_application( $id, $data);
    else
    {
-      $data['dh_applicant']['a_m_name'] = '';
-      $data['dh_applicant']['a_created_by'] = $CRON_USER_ID;
-      $data['dh_applicant']['a_status'] = '';
-      $id = insert_application( $data );
-      if ( isset($data['dh_applicant']['a_photo'])  )
-      {
+	  $data['dh_applicant']['a_m_name'] = '';
+	  $data['dh_applicant']['a_created_by'] = $CRON_USER_ID;
+	  $data['dh_applicant']['a_status'] = '';
+	  $id = insert_application( $data );
+	  if ( isset($data['dh_applicant']['a_photo'])  )
+	  {
 	 $filename = $data['dh_applicant']['a_center']."/".$data['dh_applicant']['a_course']."/app-".sprintf("%06d", $id).$data['photo-ext'];
 	 $full_path = $PHOTO_DIR."/".$filename;
- 	 $photo = 'private://photo-id/'.$filename;
+	 $photo = 'private://photo-id/'.$filename;
 	 if ( $id > 0 )
 	 {
-	    $dir = dirname($full_path);
-	    if ( !is_dir($dir))
-	    {
+		$dir = dirname($full_path);
+		if ( !is_dir($dir))
+		{
 		if (posix_getuid() == 0)
-   		   posix_setuid(33);
+		   posix_setuid(33);
 		mkdir($dir, 0755, true);
-	    }
-	    rename( $data['dh_applicant']['a_photo'] ,$full_path);
+		}
+		rename( $data['dh_applicant']['a_photo'] ,$full_path);
 
-	    mysql_query("update dh_applicant set a_photo='$photo' where a_id=$id");
+		mysql_query("update dh_applicant set a_photo='$photo' where a_id=$id");
 	 }
 	 ///echo "$filename\n";
-      }
-      $city_id = get_city( $data['dh_applicant']['a_city_str'] );
-      if ( $city_id <> ''  )
+	  }
+	  $city_id = get_city( $data['dh_applicant']['a_city_str'] );
+	  if ( $city_id <> ''  )
 	 $data['dh_applicant']['a_city'] = $city_id;
-      else
-      {
+	  else
+	  {
 	  $q = "select ci.c_id from dh_pin_code p left join dh_city ci on p.pc_city=ci.c_id left join 
 		dh_state s on (ci.c_state=s.s_code and ci.c_country=s.s_country) left join dh_country co on ci.c_country=co.c_code where 
 		pc_pin='".$data['dh_applicant']['a_zip']."' limit 0,1";
 	  $city = my_result($q);
 	  if ($city > 0)
-	     $data['dh_applicant']['a_city'] = $city;
-      }
-      //echo $data['dh_applicant']['a_photo']."\n";
+		 $data['dh_applicant']['a_city'] = $city;
+	  }
+	  //echo $data['dh_applicant']['a_photo']."\n";
    }
    if ($id > 0)
    {
@@ -189,18 +202,19 @@ function process_xml( $xml )
   $ref_code = $xml->ApplicationReferenceCode;
   $subdomain = (string)$xml->Event->EventKey->LocationKey->SubDomain;
   $event_id = (string)$xml->Event->EventKey->EventId;
+  $template = (string)$xml->Event->ApplicationTemplateName;
   $data['start_date'] = (string)$xml->Event->StartDate;
   $data['end_date'] = (string)$xml->Event->EndDate;
   $data['enrol_date'] = (string)$xml->Event->EnrollmentOpenDate;
   $course_type = (string)$xml->Event->EventType;
   if ( in_array((string)$xml->Event->Cancelled->Value, array('Yes', 'YES', 'True', 'TRUE') ) )
-     $data['cancelled'] = 1;
+	 $data['cancelled'] = 1;
   else
-     $data['cancelled'] = 0;
+	 $data['cancelled'] = 0;
   if ( in_array((string)$xml->Event->ListOnly->Value, array('Yes', 'YES', 'True', 'TRUE') ) )
-     $data['list_only'] = 1;
+	 $data['list_only'] = 1;
   else
-     $data['list_only'] = 0;
+	 $data['list_only'] = 0;
   $data['status_om'] = (string)$xml->Event->OldMaleStatus;
   $data['status_of'] = (string)$xml->Event->OldFemaleStatus;
   $data['status_nm'] = (string)$xml->Event->NewMaleStatus;
@@ -210,149 +224,195 @@ function process_xml( $xml )
 
   $center_id = my_result("select c_id from dh_center where c_subdomain='$subdomain'");
   if ( $center_id == 0)
-    logit("process_xml: Cant find center $subdomain");
+	logit("process_xml: Cant find center $subdomain");
   $course_type_id = my_result("select td_id from dh_type_detail where td_type='COURSE-TYPE'  and  td_key='$course_type'");
   if ( $course_type_id == 0)
-    logit("process_xml: Cant find Course Type $course_type");
+	logit("process_xml: Cant find Course Type $course_type");
   $course_id = my_result("select c_id from dh_course where c_center='$center_id' and c_id='$event_id'"); 
   if ( $course_id == 0 )
   {
-      $course_id = my_result("select c_id from dh_course where c_center='$center_id' and c_course_type='$course_type_id' and c_start='".$data['start_date']."' and c_end='".$data['end_date']."' limit 1"); 
-      if ($course_id == 0 )
-        $course_id = create_course( $center_id, $course_type_id, $data );
+	  $course_id = my_result("select c_id from dh_course where c_center='$center_id' and c_course_type='$course_type_id' and c_start='".$data['start_date']."' and c_end='".$data['end_date']."' limit 1"); 
+	  if ($course_id == 0 )
+		$course_id = create_course( $center_id, $course_type_id, $data );
   }
-
   $ROW['dh_applicant']['a_source'] = 'dhamma.org';
   $ROW['dh_applicant']['a_source_id'] = (string)$appid;
   $ROW['dh_applicant']['a_center'] = $center_id;
   $ROW['dh_applicant']['a_course'] = $course_id;
+  $teacher = '';
   foreach( $xml->AppItems->AppItem as $item )
   {
-    $key = (string)$item->AppItemKey->IntegrationReference;
-    if ( array_key_exists($key, $MAP ) )
-    {
-	$field = $MAP[$key];
-        switch( $field['type'] )
-    	{
-	   case 'option':
-		$value = $item->AppItemAnswer->OptionValue;
-	   case 'optionbool':
-		$value = $item->AppItemAnswer->OptionValue;
-		break;
-	   case 'text':
-		$value = $item->AppItemAnswer->TextValue;
-		break;
-	   case 'integer':
-		$value = $item->AppItemAnswer->IntegerValue;
-		break;
-	   case 'date':
-		$value = $item->AppItemAnswer->DateValue;
-		break;
-	   case 'country':
-		$value = $item->AppItemAnswer->CountryValue->CountryKey->IsoCode;
-		//$value = get_country($value);
-		break;
-	   case 'state':
-		$value = $item->AppItemAnswer->StateProvinceValue->StateProvinceKey->IsoCode;
-		//$value = get_state($value);
-		break;
-	   case 'language':
-		$value = $item->AppItemAnswer->LanguageValue->LanguageKey->IsoCode;
-		$value = get_language($value);
-		break;
-	   case 'proficiency':
-		$value = $item->AppItemAnswer->LanguageProficiencyLevelValue->LanguageProficiencyLevel->LanguageKey->IsoCode;
-		$value = get_language($value);
-		break;
-	   case 'proficiency_multi':
-		$a = 1;
-	 	foreach( $item->AppItemAnswer->LanguageProficiencyLevelValue->LanguageProficiencyLevel as $proficiency )
+		$key = (string)$item->AppItemKey->IntegrationReference;
+		if ( array_key_exists($key, $MAP ) )
 		{
-		   $value = $proficiency->LanguageKey->IsoCode;
-		   $pl = $proficiency->ProficiencyLevel;
-		   $ROW[ $field['table'] ][ $field['field'].'_'.$a ] = get_language($value);
-		   $ROW[ $field['table'] ][ $field['field'].'_'.$a.'_level' ] = (string) $pl;
-		   $a++;
-		}
-		//$value = $item->AppItemAnswer->LanguageValue->LanguageKey->IsoCode;
-		//$value = get_language($value);
-		break;
-	   case 'eventtype':
-		$value = $item->AppItemAnswer->EventTypeValue;
-		break;
-	   case 'image':
-		$c_type = (string)$item->AppItemAnswer->ImageValue->ContentType;
-		$img_txt = (string)$item->AppItemAnswer->ImageValue->Value;
-		$img_data = base64_decode($img_txt);
-		$ext  = "";
-		if ( strstr($c_type, "jpeg") )
-			$ext = ".jpg";
-		elseif ( strstr($c_type, "png") )
-			$ext = ".png";
-		//$file = "$PHOTO_DIR/$centre_id/$course_id/".$ext;
-		$tmp_file = tempnam("/tmp", "PHOTO");
-		$ROW['photo-ext'] = $ext;
-		$value = $tmp_file;
-		$handle = fopen($tmp_file, "w");
-		fwrite($handle, $img_data);
-		fclose($handle);
-		chown($tmp_file, "www-data");
-		break;
-	   case 'notes':
-		$value = $item->AppItemAnswer->NotesValue;
-		foreach( $item->AppItemAnswer->NotesValue->Note as $note )
-		{
-		    $comment = (string)$note->Comment;
-		    if ( $comment == 'System note:Recommending AT Review' )
-		    {
-			$ROW[ $field['table'] ]['al_recommending'] = (string)$note->To;
-		    }
-		    elseif( $comment == 'System note:Area Teacher Review')
-		    {
-			$ROW[ $field['table'] ]['al_area_at'] = (string)$note->To;
-		    }
-		}
-		break;
-	   default:
-		$value = $item->AppItemAnswer->StringValue;
-		break;
-	}
- 	if ( $field['type'] == 'optionbool')
-	{
-	   $temp = (string) $value;
-	   if ( in_array($temp, array('YES', 'Yes', 'TRUE', 'True')) )
-		$temp_val = 1;
-	   else
-		$temp_val = 0;
-	   //echo "$key => $temp_val => $value\n";
-	   $ROW[ $field['table'] ][ $field['field'] ] = $temp_val?1:0;
-	   if ( $key == 'QuestionQualifyOldStudent' )
-	   {
-		if (!$temp_val)
-		  $ROW[ $field['table'] ][ 'a_type' ] = 'Sit';
- 	   }
-	}
-	else
-	{
-	   if ( $field['field'] == 'a_type' )
-	   {
-		if ( (string) $value == 'Sit' )
-		   $value = 'Student';
-		else
-		   $value = 'Sevak';
-	   }
-	   elseif ( in_array($field['field'], array('ac_first_year', 'ac_last_year') ))
-	   {
-              $temp = explode("/", (string) $value );
-	      if ( count($temp) > 1 )
-	        $ROW[ $field['table'] ][ str_replace('year', 'month', $field['field'] ) ] = $temp[1];
-	   }
+			$field = $MAP[$key];
+			switch( $field['type'] )
+			{
+			   case 'option':
+				$value = $item->AppItemAnswer->OptionValue;
+			   case 'optionbool':
+				$value = $item->AppItemAnswer->OptionValue;
+				break;
+			   case 'text':
+				$value = $item->AppItemAnswer->TextValue;
+				break;
+			   case 'integer':
+				$value = $item->AppItemAnswer->IntegerValue;
+				break;
+			   case 'date':
+				$value = $item->AppItemAnswer->DateValue;
+				break;
+			   case 'country':
+				$value = $item->AppItemAnswer->CountryValue->CountryKey->IsoCode;
+				//$value = get_country($value);
+				break;
+			   case 'state':
+				$value = $item->AppItemAnswer->StateProvinceValue->StateProvinceKey->IsoCode;
+				//$value = get_state($value);
+				break;
+			   case 'language':
+				$value = $item->AppItemAnswer->LanguageValue->LanguageKey->IsoCode;
+				$value = get_language($value);
+				break;
+			   case 'proficiency':
+				$value = $item->AppItemAnswer->LanguageProficiencyLevelValue->LanguageProficiencyLevel->LanguageKey->IsoCode;
+				$value = get_language($value);
+				break;
+			   case 'proficiency_multi':
+				$a = 1;
+				foreach( $item->AppItemAnswer->LanguageProficiencyLevelValue->LanguageProficiencyLevel as $proficiency )
+				{
+				   $value = $proficiency->LanguageKey->IsoCode;
+				   $pl = $proficiency->ProficiencyLevel;
+				   $ROW[ $field['table'] ][ $field['field'].'_'.$a ] = get_language($value);
+				   $ROW[ $field['table'] ][ $field['field'].'_'.$a.'_level' ] = (string) $pl;
+				   $a++;
+				}
+				//$value = $item->AppItemAnswer->LanguageValue->LanguageKey->IsoCode;
+				//$value = get_language($value);
+				break;
+			   case 'teacher':
+				$teacher = $item->AppItemAnswer->TeacherValue->TeacherKey->DhammaCode;
+				break;
+			   case 'eventtype':
+				$value = $item->AppItemAnswer->EventTypeValue;
+				break;
+			   case 'image':
+				$c_type = (string)$item->AppItemAnswer->ImageValue->ContentType;
+				$img_txt = (string)$item->AppItemAnswer->ImageValue->Value;
+				$img_data = base64_decode($img_txt);
+				$ext  = "";
+				if ( strstr($c_type, "jpeg") )
+					$ext = ".jpg";
+				elseif ( strstr($c_type, "png") )
+					$ext = ".png";
+				//$file = "$PHOTO_DIR/$centre_id/$course_id/".$ext;
+				$tmp_file = tempnam("/tmp", "PHOTO");
+				$ROW['photo-ext'] = $ext;
+				$value = $tmp_file;
+				$handle = fopen($tmp_file, "w");
+				fwrite($handle, $img_data);
+				fclose($handle);
+				chown($tmp_file, "www-data");
+				break;
+			   case 'notes':
+				$value = $item->AppItemAnswer->NotesValue;
+				foreach( $item->AppItemAnswer->NotesValue->Note as $note )
+				{
+					$comment = (string)$note->Comment;
+					if ( $comment == 'System note:Recommending AT Review' )
+					{
+					$ROW[ $field['table'] ]['al_recommending'] = (string)$note->To;
+					}
+					elseif( $comment == 'System note:Area Teacher Review')
+					{
+					$ROW[ $field['table'] ]['al_area_at'] = (string)$note->To;
+					}
+				}
+				break;
+			   default:
+				$value = $item->AppItemAnswer->StringValue;
+				break;
+			} // end of switch
 
-	   if ( !in_array( $field['type'], array('notes', 'proficiency_multi') ) )
-		 $ROW[ $field['table'] ][ $field['field'] ] = (string) $value;
-	}
-     }
+			if ( $field['type'] == 'optionbool')
+			{
+			   $temp = (string) $value;
+			   if ( in_array($temp, array('YES', 'Yes', 'TRUE', 'True')) )
+				$temp_val = 1;
+			   else
+				$temp_val = 0;
+			   //echo "$key => $temp_val => $value\n";
+			   $ROW[ $field['table'] ][ $field['field'] ] = $temp_val?1:0;
+			   if ( $key == 'QuestionQualifyOldStudent' )
+			   {
+					if (!$temp_val)
+					  $ROW[ $field['table'] ][ 'a_type' ] = 'Sit';
+			   }
+			}
+			else
+			{
+			   if ( $field['field'] == 'a_type' )
+			   {
+					if ( (string) $value == 'Sit' )
+					  $value = 'Student';
+					else
+					  $value = 'Sevak';
+			   }
+			   elseif ( in_array($field['field'], array('ac_first_year', 'ac_last_year') ))
+			   {
+					  $temp = explode("/", (string) $value );
+				  if ( count($temp) > 1 )
+					$ROW[ $field['table'] ][ str_replace('year', 'month', $field['field'] ) ] = $temp[1];
+			   }
+			   elseif( in_array($key, array('QuestionArrivalDateTime', 'QuestionDepatureDateTime') ) )
+			   {
+			   		$temp = (string) $value;
+			   		if ( $temp <> '')
+			   		{
+			   			$seva_part_time[str_replace("Question", "", $key)] = $value; 
+			   		}
+			   }
+
+			   if ( !in_array( $field['type'], array('notes', 'proficiency_multi', 'teacher') ) )
+			   		if ( isset($field['table']) )
+						$ROW[ $field['table'] ][ $field['field'] ] = (string) $value;
+
+
+			}
+		}
+  } // end of foreach
+  if (! isset($seva_part_time) )
+  		$seva_part_time = array();
+
+  if (!empty($seva_part_time))
+  		$ROW['dh_applicant']['a_extra'] .= "\nPartTime Seva: Arrival: ".$seva_part_time['ArrivalDateTime'].", Departure: ".$seva_part_time['DepatureDateTime'];
+  if ($template == 'AT Workshop')
+  {
+
+	  $ROW['dh_applicant']['a_type'] = 'Student';
+	  if (!isset($ROW['dh_applicant']['a_gender'])) $ROW['dh_applicant']['a_gender'] = 'M';
+	  $hand = mysql_query("select * from dh_teacher where t_code='$teacher' and t_gender='".$ROW['dh_applicant']['a_gender']."'");
+	  if ( mysql_num_rows($hand) > 0 )
+	  {
+		 $r = mysql_fetch_array($hand);
+		 $ROW['dh_applicant']['a_f_name'] = $r['t_f_name'];
+		 $ROW['dh_applicant']['a_m_name'] = $r['t_m_name'];
+		 $ROW['dh_applicant']['a_l_name'] = $r['t_l_name'];
+		 $ROW['dh_applicant']['a_country'] = $r['t_country'];
+		 $ROW['dh_applicant']['a_state'] = $r['t_state'];
+		 $ROW['dh_applicant']['a_city'] = $r['t_city'];
+		 $ROW['dh_applicant']['a_address'] = $r['t_address'];
+		 $ROW['dh_applicant']['a_zip'] = $r['t_pincode'];
+		 $ROW['dh_applicant']['a_phone_home'] = $r['t_res_phone'];
+		 $ROW['dh_applicant']['a_phone_mobile'] = $r['t_mob_phone'];
+		 $ROW['dh_applicant']['a_phone_office'] = $r['t_off_phone'];
+		 $ROW['dh_applicant']['a_email'] = $r['t_email'];
+	  }
+	  //$ROW['dh_applicant']['']
   }
+  $referal = is_in_referal_list($ROW['dh_applicant']);
+  $ROW['dh_applicant']['a_referral'] = $referal?$referal:"0";
 
   course_status_check( $center_id, $course_type, $ROW['dh_applicant']['a_gender'], $course_id );
   return $ROW;
@@ -368,7 +428,7 @@ function update_application ( $appid, $data )
    exec_query('dh_applicant', $data['dh_applicant'], "a_id='$appid'", $debug);
    exec_query('dh_applicant_extra', $data['dh_applicant_extra'], "ae_applicant = '$appid'", $debug);
    if (isset($data['dh_applicant_course']) && is_array($data['dh_applicant_course']))
-      exec_query('dh_applicant_course', $data['dh_applicant_course'], "ac_applicant = '$appid'", $debug);
+	  exec_query('dh_applicant_course', $data['dh_applicant_course'], "ac_applicant = '$appid'", $debug);
 }
 
 function insert_application( $data )
@@ -380,18 +440,18 @@ function insert_application( $data )
    $applicant_id = exec_query('dh_applicant', $data['dh_applicant'], '', $debug);
    if ( isset($data['dh_applicant_extra']) )
    {
-      $data['dh_applicant_extra']['ae_applicant'] = $applicant_id;
-      exec_query('dh_applicant_extra', $data['dh_applicant_extra'], '', $debug);
+	  $data['dh_applicant_extra']['ae_applicant'] = $applicant_id;
+	  exec_query('dh_applicant_extra', $data['dh_applicant_extra'], '', $debug);
    }
    if ( isset($data['dh_applicant_course']) )
    {
-      $data['dh_applicant_course']['ac_applicant'] = $applicant_id;
-      exec_query('dh_applicant_course', $data['dh_applicant_course'], '', $debug);
+	  $data['dh_applicant_course']['ac_applicant'] = $applicant_id;
+	  exec_query('dh_applicant_course', $data['dh_applicant_course'], '', $debug);
    }
    if ( isset($data['dh_applicant_lc']) )
    {
-      $data['dh_applicant_lc']['al_applicant'] = $applicant_id;
-      exec_query('dh_applicant_lc', $data['dh_applicant_lc'], '', $debug);
+	  $data['dh_applicant_lc']['al_applicant'] = $applicant_id;
+	  exec_query('dh_applicant_lc', $data['dh_applicant_lc'], '', $debug);
    }
    $old = getcwd();
    chdir($APP_ROOT);
@@ -400,13 +460,13 @@ function insert_application( $data )
    $update_waitlist = my_result("select cs_apps_waitlist from dh_center_setting where cs_center=".$data['dh_applicant']['a_center']);
    if ($update_waitlist)
    {
-     $old = $data['dh_applicant']['a_old']?"o":"n";
-     $course_status = my_result("select c_status_".$old.strtolower($data['dh_applicant']['a_gender'])." from dh_course where c_id=".$data['dh_applicant']['a_course']);
-     if ( in_array($course_status, array('Wait List', 'Course Full')) && ( strtolower($data['dh_applicant']['a_type']) <> 'sevak') )
-     {
-       $cmd = "/usr/bin/php status-trigger.php $applicant_id 'WaitList'";
-       exec($cmd);    
-     }    
+	 $old = $data['dh_applicant']['a_old']?"o":"n";
+	 $course_status = my_result("select c_status_".$old.strtolower($data['dh_applicant']['a_gender'])." from dh_course where c_id=".$data['dh_applicant']['a_course']);
+	 if ( in_array($course_status, array('Wait List', 'Course Full')) && ( strtolower($data['dh_applicant']['a_type']) <> 'sevak') )
+	 {
+	   $cmd = "/usr/bin/php status-trigger.php $applicant_id 'WaitList'";
+	   exec($cmd);    
+	 }    
    }
 
    chdir($old);
