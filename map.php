@@ -7,18 +7,21 @@ $MAP["QuestionProfileAddressCountry"] = array("type" => "country", "field" => "a
 $MAP["QuestionProfileNameGiven"] = array("type" => "string", "field" => "a_f_name", "table" => "dh_applicant");
 $MAP["QuestionProfileNameLast"] = array("type" => "string", "field" => "a_l_name", "table" => "dh_applicant");
 
-/*
-$MAP['QuestionProfileNationalId'] = array("type" => "string");
-$MAP['idtype'] = array("type" => "multi");
-$MAP['occupationIndia'] = array("type" => "multi" );
-$MAP['QuestionProfileOccupationOther'] = array('type' => 'string');
-*/
+
+$MAP['QuestionProfileNationalId.India'] = array("type" => "string", "table" => "dh_applicant");
+$MAP['idtype'] = array("type" => "multi_idtype", 'table' => 'dh_applicant');
+//$MAP['occupationIndia'] = array("type" => "multi_occupation" );
+//$MAP['QuestionProfileOccupationOther'] = array('type' => 'string');
+
 $MAP["QuestionLanguageDiscourse"] = array("type" => "proficiency", "field" => "a_lang_discourse", "table" => "dh_applicant");
 
 
 //$MAP["QuestionProfileAge"] = array("type" => "integer", "field" => "a_age", "table" => "dh_applicant");
 $MAP["QuestionProfileDateOfBirth"] = array("type" => "date", "field" => "a_dob", "table" => "dh_applicant");
 $MAP["QuestionProfileOccupation"] = array("type" => "string", "field" => "a_occupation", "table" => "dh_applicant");
+$MAP["occupationIndia"] = array("type" => "multi_occupation", "field" => "a_occupation", "table" => "dh_applicant");
+$MAP['QuestionProfileOccupationOther'] = array('type' => 'string', 'table' => 'dh_applicant');
+
 $MAP["QuestionProfileEducation"] = array("type" => "string", "field" => "a_education", "table" => "dh_applicant");
 $MAP["QuestionProfileCompanyName2"] = array("type" => "string", "field" => "a_company", "table" => "dh_applicant");
 $MAP["QuestionProfileDepartment"] = array("type" => "string", "field" => "a_department", "table" => "dh_applicant");

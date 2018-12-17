@@ -239,7 +239,8 @@ function process_xml( $xml )
   $ROW['dh_applicant']['a_source_id'] = (string)$appid;
   $ROW['dh_applicant']['a_center'] = $center_id;
   $ROW['dh_applicant']['a_course'] = $course_id;
-  $teacher = '';
+  $teacher = ''; $id_type = "";
+
   foreach( $xml->AppItems->AppItem as $item )
   {
 		$key = (string)$item->AppItemKey->IntegrationReference;
@@ -293,8 +294,22 @@ function process_xml( $xml )
 				//$value = $item->AppItemAnswer->LanguageValue->LanguageKey->IsoCode;
 				//$value = get_language($value);
 				break;
-				case 'multi':
-				
+				case 'multi_idtype':
+				$value = (string) $item->AppItemAnswer->MultiChoiceValue->Value;
+				switch($value)
+				{
+					case 'Aadhar': $id_type = "a_aadhar";
+						break;
+					case 'National ID': $id_type = "a_voter_id";
+						break;
+					case 'Pan Card': $id_type = "a_pancard";
+						break;
+					case 'Passport': $id_type = "a_passport";
+						break;
+				}
+				break;
+				case 'multi_occupation':
+				$value = (string) $item->AppItemAnswer->MultiChoiceValue->Value;
 				break;
 			   case 'teacher':
 				$teacher = $item->AppItemAnswer->TeacherValue->TeacherKey->DhammaCode;
@@ -378,9 +393,20 @@ function process_xml( $xml )
 			   			$seva_part_time[str_replace("Question", "", $key)] = $value; 
 			   		}
 			   }
+			   elseif ($key == 'QuestionProfileNationalId.India' ) 
+			   {
+			   		if ( $id_type <> '' )
+			   			$field['field'] = $id_type;
+			   }
+			   elseif ($key == 'QuestionProfileOccupationOther' ) 
+			   {
+			   		$temp = (string) $value;
+			   		if (trim($value) <> '')
+			   			$field['field'] = 'a_occupation';
+			   }
 
-			   if ( !in_array( $field['type'], array('notes', 'proficiency_multi', 'teacher') ) )
-			   		if ( isset($field['table']) )
+			   if ( !in_array( $field['type'], array('notes', 'proficiency_multi', 'teacher', 'multi_idtype') ) )
+			   		if ( isset($field['table']) && isset($field['field']) && ($field['field'] <> '') )
 						$ROW[ $field['table'] ][ $field['field'] ] = (string) $value;
 
 
