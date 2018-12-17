@@ -6,6 +6,16 @@ $MAP["QuestionQualifyGender"] = array("type" => "option", "field" => "a_gender",
 $MAP["QuestionProfileAddressCountry"] = array("type" => "country", "field" => "a_country", "table" => "dh_applicant");
 $MAP["QuestionProfileNameGiven"] = array("type" => "string", "field" => "a_f_name", "table" => "dh_applicant");
 $MAP["QuestionProfileNameLast"] = array("type" => "string", "field" => "a_l_name", "table" => "dh_applicant");
+
+/*
+$MAP['QuestionProfileNationalId'] = array("type" => "string");
+$MAP['idtype'] = array("type" => "multi");
+$MAP['occupationIndia'] = array("type" => "multi" );
+$MAP['QuestionProfileOccupationOther'] = array('type' => 'string');
+*/
+$MAP["QuestionLanguageDiscourse"] = array("type" => "proficiency", "field" => "a_lang_discourse", "table" => "dh_applicant");
+
+
 //$MAP["QuestionProfileAge"] = array("type" => "integer", "field" => "a_age", "table" => "dh_applicant");
 $MAP["QuestionProfileDateOfBirth"] = array("type" => "date", "field" => "a_dob", "table" => "dh_applicant");
 $MAP["QuestionProfileOccupation"] = array("type" => "string", "field" => "a_occupation", "table" => "dh_applicant");
@@ -65,8 +75,9 @@ $MAP["QuestionProfileCourseTotalSat60Day"] = array("type" => "integer", "field" 
 $MAP["QuestionProfileCourseTotalSat10DaySpecial"] = array("type" => "integer", "field" => "ac_spl", "table" => "dh_applicant_course");
 $MAP["QuestionProfileCourseTotalSatTSC"] = array("type" => "integer", "field" => "ac_tsc", "table" => "dh_applicant_course");
 $MAP["InstructionLanguageProficiency"] = array("type" => "proficiency_multi", "field" => "a_lang", "table" => "dh_applicant");
+$MAP["QuestionArrivalDateTime"] = array("type" => "string");
+$MAP["QuestionDepartureDateTime"] = array("type" => "string");
 
-$MAP["QuestionLanguageDiscourse"] = array("type" => "proficiency", "field" => "al_lang_discourse", "table" => "dh_applicant_lc");
 $MAP["QuestionProfileATYesNo"] = array("type" => "optionbool", "field" => "ac_teacher", "table" => "dh_applicant_course");
 $MAP["QuestionProfileATYearAppointed"] = array("type" => "integer", "field" => "al_at_year", "table" => "dh_applicant_lc");
 $MAP["ImageApplicantPicture"] = array("type" => "image", "field" => "a_photo", "table" => "dh_applicant");
@@ -106,5 +117,5 @@ $MAP["QuestionSpecialRequirmentsAdditionalInfo"] = array("type" => "text", "fiel
 $MAP["QuestionAdditionalInformationYesNoDetails"] = array("type" => "text", "field" => "al_additional_info", "table" => "dh_applicant_lc");
 $MAP["QuestionArriveLongCourse"] = array("type" => "string", "field" => "al_arrival", "table" => "dh_applicant_lc");
 $MAP["ApplicationNotesTable"] = array("type" => "notes", "field" => "al_", "table" => "dh_applicant_lc");
-
+$MAP["Name_AT"]	= array("type" => "teacher");
 ?>

@@ -277,6 +277,8 @@ function process_xml( $xml )
 			   case 'proficiency':
 				$value = $item->AppItemAnswer->LanguageProficiencyLevelValue->LanguageProficiencyLevel->LanguageKey->IsoCode;
 				$value = get_language($value);
+				$pl = $item->AppItemAnswer->LanguageProficiencyLevelValue->LanguageProficiencyLevel->ProficiencyLevel; 
+				$ROW[ $field['table'] ][ $field['field'].'_level' ] = (string) $pl;
 				break;
 			   case 'proficiency_multi':
 				$a = 1;
@@ -290,6 +292,9 @@ function process_xml( $xml )
 				}
 				//$value = $item->AppItemAnswer->LanguageValue->LanguageKey->IsoCode;
 				//$value = get_language($value);
+				break;
+				case 'multi':
+				
 				break;
 			   case 'teacher':
 				$teacher = $item->AppItemAnswer->TeacherValue->TeacherKey->DhammaCode;
