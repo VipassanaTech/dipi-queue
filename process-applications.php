@@ -285,6 +285,7 @@ function process_xml( $xml )
 				$a = 1;
 				foreach( $item->AppItemAnswer->LanguageProficiencyLevelValue->LanguageProficiencyLevel as $proficiency )
 				{
+					if ($a > 3) continue;
 				   $value = $proficiency->LanguageKey->IsoCode;
 				   $pl = $proficiency->ProficiencyLevel;
 				   $ROW[ $field['table'] ][ $field['field'].'_'.$a ] = get_language($value);
