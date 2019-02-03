@@ -3,13 +3,12 @@
 $MAP["QuestionQualifyOldStudent"] = $MAP["ChildTeenQuestionVipassanaOldStudent"] = array("type" => "optionbool", "field" => "a_old", "table" => "dh_applicant");
 $MAP["QuestionQualifySitOrServe"] = array("type" => "option", "field" => "a_type", "table" => "dh_applicant");
 $MAP["QuestionQualifyGender"] = array("type" => "option", "field" => "a_gender", "table" => "dh_applicant");
-$MAP["QuestionProfileAddressCountry"] = array("type" => "country", "field" => "a_country", "table" => "dh_applicant");
+$MAP["QuestionProfileAddressCountry"] = $MAP['QuestionProfileParentCountry'] = array("type" => "country", "field" => "a_country", "table" => "dh_applicant");
 $MAP["QuestionProfileNameGiven"] = array("type" => "string", "field" => "a_f_name", "table" => "dh_applicant");
 $MAP["QuestionProfileNameLast"] = array("type" => "string", "field" => "a_l_name", "table" => "dh_applicant");
 
 
 $MAP['QuestionProfileNationalId.India'] = array("type" => "string", "table" => "dh_applicant");
-$MAP['QuestionProfileParentCountry'] = array("type" => "string", "table" => "dh_applicant");
 $MAP['idtype'] = array("type" => "multi_idtype", 'table' => 'dh_applicant');
 //$MAP['occupationIndia'] = array("type" => "multi_occupation" );
 //$MAP['QuestionProfileOccupationOther'] = array('type' => 'string');
