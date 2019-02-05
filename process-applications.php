@@ -273,8 +273,8 @@ function process_xml( $xml )
 				break;
 			   case 'phone':
 				$value = (string)$item->AppItemAnswer->PhoneValue;
-				if (substr($value, 0, 3) == '+91' )
-					$value = substr($value, 3 ); 
+				if (substr($value, 0, 2) == '91' )
+					$value = substr($value, 2 ); 
 				else
 				{
 					$num = substr($value, -10);
