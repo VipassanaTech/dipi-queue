@@ -271,6 +271,9 @@ function process_xml( $xml )
 				$value = $item->AppItemAnswer->StateProvinceValue->StateProvinceKey->IsoCode;
 				//$value = get_state($value);
 				break;
+			   case 'phone':
+				$value = $item->AppItemAnswer->PhoneValue;
+				break;
 			   case 'language':
 				$value = $item->AppItemAnswer->LanguageValue->LanguageKey->IsoCode;
 				$value = get_language($value);

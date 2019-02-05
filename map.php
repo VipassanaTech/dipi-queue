@@ -33,9 +33,9 @@ $MAP["QuestionProfileAddressPostalCode"] = $MAP['QuestionProfileParentPostalCode
 $MAP["QuestionProfileLanguagePrimary"] = array("type" => "language", "field" => "a_lang_1", "table" => "dh_applicant");
 $MAP["QuestionProfileLanguageOther"] = array("type" => "string", "field" => "a_langs", "table" => "dh_applicant");
 $MAP["QuestionProfileEmail"] = $MAP['QuestionProfileParentEmail'] = array("type" => "string", "field" => "a_email", "table" => "dh_applicant");
-$MAP["QuestionProfilePhoneHome"] = $MAP['QuestionProfileParentPhoneHome'] = array("type" => "string", "field" => "a_phone_home", "table" => "dh_applicant");
-$MAP["QuestionProfilePhoneMobile"] = $MAP['QuestionProfileParentPhoneMobile'] = array("type" => "string", "field" => "a_phone_mobile", "table" => "dh_applicant");
-$MAP["QuestionProfilePhoneWork"] = array("type" => "string", "field" => "a_phone_office", "table" => "dh_applicant");
+$MAP["QuestionProfilePhoneHome"] = $MAP['QuestionProfileParentPhoneHome'] = array("type" => "phone", "field" => "a_phone_home", "table" => "dh_applicant");
+$MAP["QuestionProfilePhoneMobile"] = $MAP['QuestionProfileParentPhoneMobile'] = array("type" => "phone", "field" => "a_phone_mobile", "table" => "dh_applicant");
+$MAP["QuestionProfilePhoneWork"] = array("type" => "phone", "field" => "a_phone_office", "table" => "dh_applicant");
 $MAP["QuestionLearnAboutVipassana"] = array("type" => "string", "field" => "a_learn_about_vip", "table" => "dh_applicant");
 $MAP["QuestionPriorExperience"] = array("type" => "optionbool", "field" => "a_other_technique", "table" => "dh_applicant");
 $MAP["QuestionPriorExperienceDetails"] = array("type" => "text", "field" => "ae_desc_other_technique", "table" => "dh_applicant_extra");
@@ -85,7 +85,7 @@ $MAP["QuestionProfileATYesNo"] = array("type" => "optionbool", "field" => "ac_te
 $MAP["QuestionProfileATYearAppointed"] = array("type" => "integer", "field" => "al_at_year", "table" => "dh_applicant_lc");
 $MAP["ImageApplicantPicture"] = array("type" => "image", "field" => "a_photo", "table" => "dh_applicant");
 $MAP["EmergencyContactName"] = array("type" => "string", "field" => "a_emergency_name", "table" => "dh_applicant");
-$MAP["EmergencyContactPhone"] = array("type" => "string", "field" => "a_emergency_num", "table" => "dh_applicant");
+$MAP["EmergencyContactPhone"] = array("type" => "phone", "field" => "a_emergency_num", "table" => "dh_applicant");
 $MAP["EmergencyContactRelationship"] = array("type" => "string", "field" => "a_emergency_relation", "table" => "dh_applicant");
 $MAP["QuestionFullyCommitted"] = array("type" => "optionbool", "field" => "al_committed", "table" => "dh_applicant_lc");
 $MAP["QuestionExclusiveTwoYears"] = array("type" => "optionbool", "field" => "al_exclusive_2yrs", "table" => "dh_applicant_lc");
