@@ -273,6 +273,8 @@ function process_xml( $xml )
 				break;
 			   case 'phone':
 				$value = $item->AppItemAnswer->PhoneValue;
+				if (substr($value, 0, 3) == '+91' )
+					$value = substr($value, 3 ); 
 				break;
 			   case 'language':
 				$value = $item->AppItemAnswer->LanguageValue->LanguageKey->IsoCode;
