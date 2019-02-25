@@ -380,7 +380,7 @@ function process_xml( $xml )
 			   if ( $key == 'QuestionQualifyOldStudent' )
 			   {
 					if (!$temp_val)
-					  $ROW[ $field['table'] ][ 'a_type' ] = 'Sit';
+					  $ROW[ $field['table'] ][ 'a_type' ] = 'Student';
 			   }
 			}
 			else
