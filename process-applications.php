@@ -377,11 +377,11 @@ function process_xml( $xml )
 				$temp_val = 0;
 			   //echo "$key => $temp_val => $value\n";
 			   $ROW[ $field['table'] ][ $field['field'] ] = $temp_val?1:0;
-			   if ( $key == 'QuestionQualifyOldStudent' )
+			   /*if ( $key == 'QuestionQualifyOldStudent' )
 			   {
 					if (!$temp_val)
 					  $ROW[ $field['table'] ][ 'a_type' ] = 'Student';
-			   }
+			   }*/
 			}
 			else
 			{
