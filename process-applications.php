@@ -254,6 +254,9 @@ function process_xml( $xml )
 			   case 'optionbool':
 				$value = $item->AppItemAnswer->OptionValue;
 				break;
+			   case 'checkbox':
+				$value = $item->AppItemAnswer->CheckboxValue;
+				break;				
 			   case 'text':
 				$value = $item->AppItemAnswer->TextValue;
 				break;
