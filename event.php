@@ -78,8 +78,11 @@ if ( file_exists( $RUNNING_EVENT ) )
 if ( !db_connect() )
   exit(1);
 
-$q = "select c.*,td.td_key as 'course_type', td.td_val4 as 'course_template', cc.c_subdomain from dh_course c left join dh_type_detail td on c.c_course_type=td.td_id  
-	left join dh_center cc on c.c_center=cc.c_id where c_processed=0 and cc.c_subdomain <> '' limit $BATCH_SIZE";
+$q = "select c.*,td.td_key as 'course_type', td.td_val4 as 'course_template', cc.c_subdomain, cct.cct_course_template
+  from dh_course c left join dh_type_detail td on c.c_course_type=td.td_id  
+	left join dh_center cc on c.c_center=cc.c_id
+  left join dh_center_course_template cct on (c.c_center=cct.cct_center and td.td_key=cct.cct_course_type) 
+  where c_processed=0 and cc.c_subdomain <> '' limit $BATCH_SIZE";
 $res = mysql_query( $q );
 if ( !$res )
 {
@@ -111,7 +114,11 @@ while ( $row = mysql_fetch_array($res) )
 	continue;
     }
     else
+    {
+       if ($row['cct_course_template'] <> '')
+          $row['course_template'] = $row['cct_course_template'];
        $response = add_update_event( $row );
+    }
     if ( !$response['status'] )
     {
 	print $response['error']."\n";
