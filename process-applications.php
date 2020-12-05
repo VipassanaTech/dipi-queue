@@ -360,9 +360,11 @@ function process_xml( $xml )
 					{
 					$ROW[ $field['table'] ]['al_recommending'] = (string)$note->To;
 					}
-					elseif( $comment == 'System note:Area Teacher Review')
+					elseif( in_array($comment, array('System note:Area Teacher Review', 'System note:Approved')) )
 					{
-					$ROW[ $field['table'] ]['al_area_at'] = (string)$note->To;
+						$ROW[ $field['table'] ]['al_area_at'] = (string)$note->To;
+						if ( $ROW[ $field['table'] ]['al_area_at'] == '' )
+					        $ROW[ $field['table'] ]['al_area_at'] = (string)$note->From;
 					}
 				}
 				break;
