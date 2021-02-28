@@ -505,8 +505,8 @@ function insert_application( $data )
    if ( isset($data['dh_applicant_lc']) )
    {
 	  $data['dh_applicant_lc']['al_applicant'] = $applicant_id;
-	  $data['dh_applicant_lc']['al_recommending_approved'] = 1;
-	  $data['dh_applicant_lc']['al_area_at_approved'] = 1;
+	  $data['dh_applicant_lc']['al_recommending_approved'] = 'Approved';
+	  $data['dh_applicant_lc']['al_area_at_approved'] = 'Approved';
 	  exec_query('dh_applicant_lc', $data['dh_applicant_lc'], '', $debug);
    }
    $old = getcwd();
