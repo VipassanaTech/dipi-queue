@@ -1,8 +1,8 @@
 <?php
 
+include_once('vendor/autoload.php');
 include_once( "constants.inc" );
 include_once("map.php");
-
 
 function get_course_data( $domain, $start, $end )
 {
@@ -276,14 +276,19 @@ function process_xml( $xml )
 				break;
 			   case 'phone':
 				$value = (string)$item->AppItemAnswer->PhoneValue;
-				if (substr($value, 0, 2) == '91' )
-					$value = substr($value, 2 ); 
-				else
+				if ( $field['field'] == 'a_phone_mobile' )
 				{
-					$num = substr($value, -10);
-					$prefix = str_replace( array("+", $num), "", $value);
-					$prefix = str_pad($prefix,3,"0", STR_PAD_LEFT);
-					$value = $prefix.$num;
+					try {
+						$mobile_format = \libphonenumber\PhoneNumberUtil::getInstance();
+						$m_phone = $mobile_format->parse("+".$value, null, null, true);
+						$m_country_code = $m_phone->getCountryCode();
+						$ROW[ $field['table'] ]['a_mob_country'] = (string)$m_country_code;
+						$num = str_replace( array("+", $m_country_code), "", $value);
+						$value = $num;
+						
+					} catch (Exception $e) {
+						logit($value." -> ".$e->getMessage());					
+					}
 				}
 				break;
 			   case 'language':
@@ -500,6 +505,8 @@ function insert_application( $data )
    if ( isset($data['dh_applicant_lc']) )
    {
 	  $data['dh_applicant_lc']['al_applicant'] = $applicant_id;
+	  $data['dh_applicant_lc']['al_recommending_approved'] = 1;
+	  $data['dh_applicant_lc']['al_area_at_approved'] = 1;
 	  exec_query('dh_applicant_lc', $data['dh_applicant_lc'], '', $debug);
    }
    $old = getcwd();
