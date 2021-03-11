@@ -99,6 +99,7 @@ function create_course( $center_id, $course_type_id, $data )
    $rec['c_status_svr_f'] = $data['status_svr_f'];
    $rec['c_cancelled'] = $data['cancelled'];
    $rec['c_list_only'] = $data['list_only'];
+   $rec['c_updated'] = date('Y-m-d H:i:s');
    $rec['c_updated_by'] = 15;
 
    $id = exec_query('dh_course', $rec);
