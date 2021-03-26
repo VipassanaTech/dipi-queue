@@ -284,7 +284,8 @@ function process_xml( $xml )
 						$m_phone = $mobile_format->parse("+".$value, null, null, true);
 						$m_country_code = $m_phone->getCountryCode();
 						$ROW[ $field['table'] ]['a_mob_country'] = (string)$m_country_code;
-						$num = str_replace( array("+", $m_country_code), "", $value);
+						$num = str_replace( "+", "", $value);
+						$num = substr($num, strlen((string)$m_country_code) - 1)
 						$value = $num;
 						
 					} catch (Exception $e) {
