@@ -55,12 +55,15 @@ function delete_event( $data )
 function add_update_event( $data )
 {
   $xml = file_get_contents("xml/event-create-update.xml");
+  $data['c_comments'] = str_replace(array('&','>','<','"'), array('&amp;','&gt;','&lt;','&quot;'), nl2br($data['c_comments']));
+  $data['c_description'] = str_replace(array('&','>','<','"'), array('&amp;','&gt;','&lt;','&quot;'), nl2br($data['c_description']));
+
    $search = array('[subdomain]', '[event-id]', '[course-start]', '[course-end]', '[enrol-date]', '[course-type]', '[status-nm]', '[status-nf]', 
 		    '[status-of]', '[status-om]', '[cancelled]', '[new-event]', '[list-only]', '[special]', '[comments]', '[date-changed]', '[description]', '[course-type-template]',
-		    '[status-server-om]', '[status-server-of]' );
+		    '[status-server-om]', '[status-server-of]', '[apply-link]' );
    $replace = array( $data['c_subdomain'], $data['c_id'], $data['c_start'], $data['c_end'], $data['c_enrol_date'], $data['course_type'], $data['c_status_nm'], $data['c_status_nf'], 
-		     $data['c_status_of'], $data['c_status_om'], make_bool($data['c_cancelled']), 'false', make_bool($data['c_list_only']), 'false', htmlspecialchars(nl2br($data['c_comments']), ENT_XML1, 'UTF-8'),
-		     make_bool($data['c_date_change']), htmlspecialchars($data['c_description'], ENT_XML1, 'UTF-8'), $data['course_template'], $data['c_status_svr_m'], $data['c_status_svr_f'] );
+		     $data['c_status_of'], $data['c_status_om'], make_bool($data['c_cancelled']), 'false', make_bool($data['c_list_only']), 'false',$data['c_comments'],
+		     make_bool($data['c_date_change']), $data['c_description'], $data['course_template'], $data['c_status_svr_m'], $data['c_status_svr_f'], $data['apply-link'] );
    $xml = str_replace( $search, $replace, $xml );
 //   file_put_contents("/tmp/event-req" , $xml, FILE_APPEND);
 //   print $xml;
@@ -78,7 +81,7 @@ if ( file_exists( $RUNNING_EVENT ) )
 if ( !db_connect() )
   exit(1);
 
-$q = "select c.*,td.td_key as 'course_type', td.td_val4 as 'course_template', cc.c_subdomain, cct.cct_course_template
+$q = "select c.*,td.td_key as 'course_type', td.td_val4 as 'course_template', cc.c_subdomain, cct.cct_course_template, cc.c_vri 
   from dh_course c left join dh_type_detail td on c.c_course_type=td.td_id  
 	left join dh_center cc on c.c_center=cc.c_id
   left join dh_center_course_template cct on (c.c_center=cct.cct_center and td.td_key=cct.cct_course_type) 
@@ -117,6 +120,15 @@ while ( $row = mysql_fetch_array($res) )
     {
        if ($row['cct_course_template'] <> '')
           $row['course_template'] = $row['cct_course_template'];
+        $row['apply-link'] = "";
+        if ($row['c_vri'])
+        {
+           $prefix = '';
+           if (in_array($row['course_type'], array('20-DayOSC', '30-DayOSC', '45-DayOSC', '60-DayOSC', '10-DaySpecial', 'TSC')) )
+              $prefix = "long-course-" ;
+            $row['apply-link'] = "https://schedule.vridhamma.org/form/".$prefix."application-form?centre=".$row['c_center']."&amp;course=".$row['c_id']; 
+        }
+
        $response = add_update_event( $row );
     }
     if ( !$response['status'] )
@@ -127,17 +139,18 @@ while ( $row = mysql_fetch_array($res) )
     }
     else
     {
-//	 print $response['response'];
+	 //print $response['response'];
          $xml_obj = new SimpleXMLElement( str_replace('xmlns=', 'ns=', $response['response']) );
   	 $err = $xml_obj->xpath('Errors/Error');
          if ( $err )
          {
 	     $node = $err[0];
 	     $msg = $node->Message;
+	     //var_dump($xml_obj);
 	     /*while(list( , $node) = each($err)) {
 		    $msg .=  $node." -> ";
 	     }*/
-	     echo "Course Id: ".$row['c_id']." -> ".$msg."\n";
+	     echo "Course Id: ".$row['c_id']." -> ".$msg." -> ".$node->Context."\n";
 	     logit("Events: Request Error for course_id: ".$row['c_id'].": $msg\n");
          }
 	 else
