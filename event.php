@@ -123,6 +123,8 @@ while ( $row = mysql_fetch_array($res) )
         $row['apply-link'] = "";
         if ($row['c_vri'])
         {
+            //If c_vri is enabled, then we stop updates to dhamma.org
+            continue;
            $prefix = '';
            if (in_array($row['course_type'], array('20-DayOSC', '30-DayOSC', '45-DayOSC', '60-DayOSC', '10-DaySpecial', 'TSC')) )
               $prefix = "long-course-" ;
