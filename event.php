@@ -6,7 +6,7 @@ function remove_running()
 {
    global $RUNNING_EVENT;
    if ( file_exists($RUNNING_EVENT) )
-      unlink( $RUNNING_EVENT );
+	  unlink( $RUNNING_EVENT );
 }
 
 function make_bool( $val )
@@ -29,16 +29,16 @@ function get_response( $xml )
 
    if(curl_errno($ch))
    {
-      $res['status'] = false;
-      $res['error'] = curl_error($ch);
-      logit( "curl_exec: ".curl_error($ch) );
+	  $res['status'] = false;
+	  $res['error'] = curl_error($ch);
+	  logit( "curl_exec: ".curl_error($ch) );
    }
    else
    {
-      //print $data;
-      $res['status'] = true;
-      $res['response'] = $response;
-      curl_close($ch);
+	  //print $data;
+	  $res['status'] = true;
+	  $res['response'] = $response;
+	  curl_close($ch);
    }
    return $res;
 }
@@ -59,11 +59,11 @@ function add_update_event( $data )
   $data['c_description'] = str_replace(array('&','>','<','"'), array('&amp;','&gt;','&lt;','&quot;'), nl2br($data['c_description']));
 
    $search = array('[subdomain]', '[event-id]', '[course-start]', '[course-end]', '[enrol-date]', '[course-type]', '[status-nm]', '[status-nf]', 
-		    '[status-of]', '[status-om]', '[cancelled]', '[new-event]', '[list-only]', '[special]', '[comments]', '[date-changed]', '[description]', '[course-type-template]',
-		    '[status-server-om]', '[status-server-of]', '[apply-link]' );
+			'[status-of]', '[status-om]', '[cancelled]', '[new-event]', '[list-only]', '[special]', '[comments]', '[date-changed]', '[description]', '[course-type-template]',
+			'[status-server-om]', '[status-server-of]', '[apply-link]' );
    $replace = array( $data['c_subdomain'], $data['c_id'], $data['c_start'], $data['c_end'], $data['c_enrol_date'], $data['course_type'], $data['c_status_nm'], $data['c_status_nf'], 
-		     $data['c_status_of'], $data['c_status_om'], make_bool($data['c_cancelled']), 'false', make_bool($data['c_list_only']), 'false',$data['c_comments'],
-		     make_bool($data['c_date_change']), $data['c_description'], $data['course_template'], $data['c_status_svr_m'], $data['c_status_svr_f'], $data['apply-link'] );
+			 $data['c_status_of'], $data['c_status_om'], make_bool($data['c_cancelled']), 'false', make_bool($data['c_list_only']), 'false',$data['c_comments'],
+			 make_bool($data['c_date_change']), $data['c_description'], $data['course_template'], $data['c_status_svr_m'], $data['c_status_svr_f'], $data['apply-link'] );
    $xml = str_replace( $search, $replace, $xml );
 //   file_put_contents("/tmp/event-req" , $xml, FILE_APPEND);
 //   print $xml;
@@ -98,70 +98,71 @@ register_shutdown_function('remove_running');
 
 while ( $row = mysql_fetch_array($res) )
 {
-    if ( $row['c_finalized'] )
-    {
-        mysql_query("update dh_course set c_processed='1', c_finalized_tstamp=NOW() where c_id=".$row['c_id']);
-        $old = getcwd();
-        chdir($APP_ROOT);
-        $cmd = "/usr/bin/php action.php ".$row['c_id']." 'Finalize'";
-        exec($cmd);
-        chdir($old);
-        continue;
-    }
-    echo $row['c_id']."\n";
-    if ( $row['c_deleted'] )
-    {
+	if ( $row['c_finalized'] )
+	{
+		mysql_query("update dh_course set c_processed='1', c_finalized_tstamp=NOW() where c_id=".$row['c_id']);
+		$old = getcwd();
+		chdir($APP_ROOT);
+		$cmd = "/usr/bin/php action.php ".$row['c_id']." 'Finalize'";
+		exec($cmd);
+		chdir($old);
+		continue;
+	}
+	echo $row['c_id']."\n";
+	if ( $row['c_deleted'] )
+	{
 	$response = delete_event($row);
-        if (! mysql_query("update dh_course set c_processed='1' where c_id=".$row['c_id']))
+		if (! mysql_query("update dh_course set c_processed='1' where c_id=".$row['c_id']))
 	   logit("Error: Course id ".$row['c_id']." - ".mysql_error());
 	continue;
-    }
-    else
-    {
-       if ($row['cct_course_template'] <> '')
-          $row['course_template'] = $row['cct_course_template'];
-        $row['apply-link'] = "";
-        if ($row['c_vri'])
-        {
-            //If c_vri is enabled, then we stop updates to dhamma.org
-            continue;
-           $prefix = '';
-           if (in_array($row['course_type'], array('20-DayOSC', '30-DayOSC', '45-DayOSC', '60-DayOSC', '10-DaySpecial', 'TSC')) )
-              $prefix = "long-course-" ;
-            $row['apply-link'] = "https://schedule.vridhamma.org/form/".$prefix."application-form?centre=".$row['c_center']."&amp;course=".$row['c_id']; 
-        }
+	}
+	else
+	{
+	   if ($row['cct_course_template'] <> '')
+		  $row['course_template'] = $row['cct_course_template'];
+		$row['apply-link'] = "";
+		if ($row['c_vri'])
+		{
+			//If c_vri is enabled, then we stop updates to dhamma.org
+			mysql_query("update dh_course set c_processed='1' where c_id=".$row['c_id']);
+			continue;
+		   	$prefix = '';
+		   if (in_array($row['course_type'], array('20-DayOSC', '30-DayOSC', '45-DayOSC', '60-DayOSC', '10-DaySpecial', 'TSC')) )
+			  $prefix = "long-course-" ;
+			$row['apply-link'] = "https://schedule.vridhamma.org/form/".$prefix."application-form?centre=".$row['c_center']."&amp;course=".$row['c_id']; 
+		}
 
-       $response = add_update_event( $row );
-    }
-    if ( !$response['status'] )
-    {
-	print $response['error']."\n";
-      logit("Error: Response err ".$response['error']);
-        $data = 'Error: '.$response['error'];
-    }
-    else
-    {
+	   $response = add_update_event( $row );
+	}
+	if ( !$response['status'] )
+	{
+		print $response['error']."\n";
+		logit("Error: Response err ".$response['error']);
+		$data = 'Error: '.$response['error'];
+	}
+	else
+	{
 	 //print $response['response'];
-         $xml_obj = new SimpleXMLElement( str_replace('xmlns=', 'ns=', $response['response']) );
-  	 $err = $xml_obj->xpath('Errors/Error');
-         if ( $err )
-         {
-	     $node = $err[0];
-	     $msg = $node->Message;
-	     //var_dump($xml_obj);
-	     /*while(list( , $node) = each($err)) {
-		    $msg .=  $node." -> ";
-	     }*/
-	     echo "Course Id: ".$row['c_id']." -> ".$msg." -> ".$node->Context."\n";
-	     logit("Events: Request Error for course_id: ".$row['c_id'].": $msg\n");
-         }
-	 else
-	 {
-	    print "Processed course id ".$row['c_id']."\n";
-            if (! mysql_query("update dh_course set c_processed='1' where c_id=".$row['c_id']))
-		logit("Error: Course id ".$row['c_id']." - ".mysql_error());
+		 $xml_obj = new SimpleXMLElement( str_replace('xmlns=', 'ns=', $response['response']) );
+		 $err = $xml_obj->xpath('Errors/Error');
+		 if ( $err )
+		 {
+			 $node = $err[0];
+			 $msg = $node->Message;
+			 //var_dump($xml_obj);
+			 /*while(list( , $node) = each($err)) {
+				$msg .=  $node." -> ";
+			 }*/
+			 echo "Course Id: ".$row['c_id']." -> ".$msg." -> ".$node->Context."\n";
+			 logit("Events: Request Error for course_id: ".$row['c_id'].": $msg\n");
+		 }
+	 	else
+	 	{
+			print "Processed course id ".$row['c_id']."\n";
+			if (! mysql_query("update dh_course set c_processed='1' where c_id=".$row['c_id']))
+				logit("Error: Course id ".$row['c_id']." - ".mysql_error());
+	 	}
 	 }
-     }
 }
 
 remove_running();
