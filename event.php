@@ -100,7 +100,7 @@ while ( $row = mysql_fetch_array($res) )
 {
 	if ( $row['c_finalized'] )
 	{
-		mysql_query("update dh_course set c_processed='1', c_finalized_tstamp=NOW() where c_id=".$row['c_id']);
+		mysql_query("update dh_course set c_processed='1', c_finalized_tstamp=NOW(), c_updated=NOW() where c_id=".$row['c_id']);
 		$old = getcwd();
 		chdir($APP_ROOT);
 		$cmd = "/usr/bin/php action.php ".$row['c_id']." 'Finalize'";
@@ -112,7 +112,7 @@ while ( $row = mysql_fetch_array($res) )
 	if ( $row['c_deleted'] )
 	{
 		$response = delete_event($row);
-		if (! mysql_query("update dh_course set c_processed='1' where c_id=".$row['c_id']))
+		if (! mysql_query("update dh_course set c_processed='1', c_updated=NOW() where c_id=".$row['c_id']))
 			logit("Error: Course id ".$row['c_id']." - ".mysql_error());
 		continue;
 	}
@@ -128,7 +128,7 @@ while ( $row = mysql_fetch_array($res) )
 			if (in_array($row['course_type'], array('20-DayOSC', '30-DayOSC', '45-DayOSC', '60-DayOSC', '10-DaySpecial', 'TSC')) )
 			{
 				$prefix = "long-course-" ;
-				mysql_query("update dh_course set c_processed='1' where c_id=".$row['c_id']);
+				mysql_query("update dh_course set c_processed='1', c_updated=NOW() where c_id=".$row['c_id']);
 				continue;
 			}
 			$row['apply-link'] = "https://schedule.vridhamma.org/form/".$prefix."application-form?centre=".$row['c_center']."&amp;course=".$row['c_id']; 
@@ -161,7 +161,7 @@ while ( $row = mysql_fetch_array($res) )
 		else
 		{
 			print "Processed course id ".$row['c_id']."\n";
-			if (! mysql_query("update dh_course set c_processed='1' where c_id=".$row['c_id']))
+			if (! mysql_query("update dh_course set c_processed='1', c_updated=NOW() where c_id=".$row['c_id']))
 				logit("Error: Course id ".$row['c_id']." - ".mysql_error());
 		}
 	 }
