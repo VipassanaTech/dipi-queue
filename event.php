@@ -145,8 +145,13 @@ while ( $row = mysql_fetch_array($res) )
 	else
 	{
 	 //print $response['response'];
+		try {
 		 $xml_obj = new SimpleXMLElement( str_replace('xmlns=', 'ns=', $response['response']) );
 		 $err = $xml_obj->xpath('Errors/Error');
+			
+		} catch (Exception $e) {
+			continue;			
+		}
 		 if ( $err )
 		 {
 			 $node = $err[0];
